@@ -4,13 +4,13 @@ from rest_framework.response import Response
 from api import models
 from rest_framework import serializers
 
-'''
+
 
 
 class MyCharField(serializers.CharField):
     "自定义模板中需要序列化字段的类，目的是自定制多对多关系中的返回值"
     def to_representation(self, value):
-        # value代表，当前user对象关联的觉得对象
+        # value代表，当前user对象关联的对象
         role_list = []
         for each in value:
             role_list.append(each.name)
@@ -34,7 +34,7 @@ class UserSerializer(serializers.Serializer):
 
     # 方法1：定制to_representation方法
     # 针对上种情况，定制返回值，继承自(serializers.CharField)
-    # role_list = MyCharField(source='roles.all')
+    # role_list = MyCharField(source='roles.all')   # 看上边自定制的类MyCharField，其中重写了to_representation方法
 
     # 方法2:(其实返回的内容，还是需要自定义MyCharField()类定制返回的值，只是value指定每个role对象，)
     # role_list = serializers.ListField(child=serializers.CharField(),source='roles.all')
@@ -44,7 +44,7 @@ class UserSerializer(serializers.Serializer):
 
     def get_role_list(self,obj):# obj就是当前user对象
         li = []
-        roles_list = obj.roles.filter(id=1)
+        roles_list = obj.roles.filter(id=1)  # 这里可以添加过滤的信息
         roles_list = obj.roles.all()
         for i in roles_list:
             li.append({'id':i.id,'name':i.name})
@@ -67,12 +67,12 @@ class UserView(APIView):
         ser = UserSerializer(instance=user_list,many=True)
         print(ser.data)
         return Response(ser.data)
-'''
+
 
 
 #######################################################################
 # 自己不用写字段的方式：继承的类不一样
-
+'''
 class UserSerializer(serializers.ModelSerializer):
     x1 = serializers.CharField(source='name')  # 自定义字段，必须定义source
     class Meta:
@@ -89,7 +89,7 @@ class UserView(APIView):
         print(ser.data)
         return Response(ser.data)
 
-
+'''
 
 
 
